@@ -1,90 +1,52 @@
-* {
-  box-sizing: border-box;
+
+.box {
+  display: inline-block;       
+  border: 1px solid gainsboro;
+  width: 15px;
+  height: 15px;
+  margin-left: -1px;
+  margin-bottom: -1px;
+  border-radius: 2px;
+  }
+
+.off {
+  background-color: ghostwhite;
+  height: 15px;
+
 }
 
-body {
-  font-family: sans-serif;
-  margin: 20px;
-  padding: 0;
+.on {
+  background-color: yellowgreen;
+  height: 15px;
+
+}
+  
+.box:hover { 
+  background: gainsboro;
 }
 
-h1 {
-  margin-top: 0;
-  font-size: 22px;
+.center {
+  margin: auto;
+  display: table;
+  margin-top: 10px;
 }
 
-h2 {
-  margin-top: 0;
-  font-size: 20px;
+.grid {
+  width: 150px;
+  line-height: 0;
+  margin: auto;
+  box-shadow: 0px 0px 20px white;
+  margin-top: 20px;
 }
-
-h3 {
-  margin-top: 0;
-  font-size: 18px;
+  
+h1, h2, h3, h4 {
+  color: rgb(55, 55, 55);
+  margin: auto;
+  text-align: center;
+  width: 50%;
+  margin-top: 10px;
 }
 
 h4 {
-  margin-top: 0;
-  font-size: 16px;
-}
-
-h5 {
-  margin-top: 0;
-  font-size: 14px;
-}
-
-h6 {
-  margin-top: 0;
-  font-size: 12px;
-}
-
-code {
-  font-size: 1.2em;
-}
-
-ul {
-  padding-inline-start: 20px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: sans-serif;
-  margin: 20px;
-  padding: 0;
-}
-
-.square {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 34px;
-  height: 34px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
-  text-align: center;
-  width: 34px;
-}
-
-.board-row:after {
-  clear: both;
-  content: '';
-  display: table;
-}
-
-.status {
-  margin-bottom: 10px;
-}
-.game {
-  display: flex;
-  flex-direction: row;
-}
-
-.game-info {
-  margin-left: 20px;
+  margin-top: 0px;
 }
