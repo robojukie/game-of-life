@@ -56,6 +56,7 @@ const App = () => {
   );
   const [originalGrid, setOriginalGrid] = useState(gridFull);
   const [intervalId, setIntervalId] = useState(null); // Declare intervalId
+  const [isPlaying, setIsPlaying] = useState(true); // game is started on load
 
   useEffect(() => {
     seed();
@@ -91,20 +92,22 @@ const App = () => {
     setIntervalId(id); // Store intervalId
   };
 
-  const playButton = () => {
-    clearInterval(intervalId); // pauses game
-    const id = setInterval(play, SPEED);
-    setIntervalId(id); // Store intervalId
-  };
-
-  const pauseButton = () => {
-    clearInterval(intervalId);
+  const toggleGame = () => {
+    if (isPlaying) {
+      clearInterval(intervalId); // pauses game
+    } else {
+      clearInterval(intervalId);
+      const id = setInterval(play, SPEED);
+      setIntervalId(id); // Store intervalId
+    }
+    setIsPlaying(!isPlaying);
   };
 
   const reset = () => {
     clearInterval(intervalId);
     setGridFull(originalGrid);
     setGeneration(0);
+    setIsPlaying(false);
   };
 
   const play = () => {
@@ -137,12 +140,10 @@ const App = () => {
   return (
     <div>
       <h1>The Game of Life</h1>
-      {/* <Buttons buttons={buttons} /> */}
       <h2>Generations: {generation}</h2>
       <div id="buttons-section" className="center">
         <div>
-          <Button onClick={playButton} label="Play" />
-          <Button onClick={pauseButton} label="Pause" />
+          <Button onClick={toggleGame} label={isPlaying ? "Pause" : "Play"} />
           <Button onClick={reset} label="Reset" />
           <Button onClick={seed} label="Reseed" />
         </div>
