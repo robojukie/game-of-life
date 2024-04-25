@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Box = ({ boxClass, row, col, selectBox }) => {
   const selectBoxHandler = () => {
@@ -8,7 +8,7 @@ const Box = ({ boxClass, row, col, selectBox }) => {
 };
 
 const Grid = ({ gridFull, rows, cols, selectBox }) => {
-  const width = cols * 14;
+  const width = cols * 16;
 
   let rowsArr = [];
   let boxClass = "";
@@ -42,8 +42,6 @@ const Grid = ({ gridFull, rows, cols, selectBox }) => {
 // * It should have a pause/play button that allows the user to pause and resume the game.
 // * It should have a reset button that resets the grid to its initial state.
 
-// Pause/play
-// reset
 const Button = ({ label }) => {
   return <button>{label}</button>;
 };
@@ -51,6 +49,9 @@ const Button = ({ label }) => {
 // Potential future features
 // - allow user to input grid size or select grid size
 // - option to step through generations (instead of automatically progressing through generations )
+function arrayClone(arr) {
+  return JSON.parse(JSON.stringify(arr));
+}
 
 function Game() {
   const SPEED = 1000;
@@ -63,20 +64,40 @@ function Game() {
       .fill()
       .map(() => Array(COLS).fill(false))
   );
+  const [intervalId, setIntervalId] = useState(null); // Declare intervalId
+
+  useEffect(() => {
+    seed();
+  }, []);
+
   //initial populating of grid
+  const seed = () => {
+    // const newGrid = [];
+    let newGrid = arrayClone(gridFull);
+    for (let i = 0; i < ROWS; i++) {
+      newGrid[i] = [];
+      for (let j = 0; j < COLS; j++) {
+        if (Math.floor(Math.random() * 4) === 1) {
+          newGrid[i][j] = true;
+        }
+      }
+    }
+    setGridFull(newGrid);
+  };
 
   // toggle cell
+  function selectBox(row, col) {
+    let gridCopy = arrayClone(gridFull);
+    gridCopy[row][col] = !gridCopy[row][col];
+    setGridFull(gridCopy);
+  }
 
   // pause/resume game
 
   //reset game
 
-  const selectBox = () => {
-    return <></>;
-  };
-
   return (
-    <div class="center">
+    <div className="center">
       <h1>Conway's Game of Life</h1>
       <p>Generation: {generation}</p>
       <div id="button-section">
