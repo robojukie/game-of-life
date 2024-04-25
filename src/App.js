@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Button from "./Button";
 import "./styles.css";
 
 function arrayClone(arr) {
@@ -39,14 +40,6 @@ const Grid = ({ gridFull, rows, cols, selectBox }) => {
     <div className="grid" style={{ width }}>
       {rowsArr}
     </div>
-  );
-};
-
-const Button = ({ onClick, label }) => {
-  return (
-    <button className="btn btn-default" onClick={onClick}>
-      {label}
-    </button>
   );
 };
 
