@@ -72,7 +72,6 @@ const App = () => {
 
   //initial populating of grid
   const seed = () => {
-    console.log("seeding");
     let newGrid = arrayClone(gridFull);
     for (let i = 0; i < ROWS; i++) {
       newGrid[i] = [];
