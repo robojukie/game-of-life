@@ -1,10 +1,16 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import "./styles.css";
+
+function arrayClone(arr) {
+  return JSON.parse(JSON.stringify(arr));
+}
 
 const Box = ({ boxClass, row, col, selectBox }) => {
   const selectBoxHandler = () => {
     selectBox(row, col);
   };
-  return <div className={boxClass} onClick={selectBoxHandler}></div>;
+
+  return <div className={boxClass} onClick={selectBoxHandler} />;
 };
 
 const Grid = ({ gridFull, rows, cols, selectBox }) => {
@@ -36,43 +42,43 @@ const Grid = ({ gridFull, rows, cols, selectBox }) => {
   );
 };
 
-// The must-have requirements for the implementation are as follows:
-// * It should be playable on a grid of cells, which can be toggled between alive and dead using the mouse.
-// * It should progress through generations automatically, according to the Game of Life rules.
-// * It should have a pause/play button that allows the user to pause and resume the game.
-// * It should have a reset button that resets the grid to its initial state.
-
-const Button = ({ label }) => {
-  return <button>{label}</button>;
+const Button = ({ onClick, label }) => {
+  return (
+    <button className="btn btn-default" onClick={onClick}>
+      {label}
+    </button>
+  );
 };
 
-// Potential future features
-// - allow user to input grid size or select grid size
-// - option to step through generations (instead of automatically progressing through generations )
-function arrayClone(arr) {
-  return JSON.parse(JSON.stringify(arr));
-}
-
-function Game() {
+const App = () => {
   const SPEED = 1000;
   const ROWS = 30;
   const COLS = 50;
 
   const [generation, setGeneration] = useState(0);
   const [gridFull, setGridFull] = useState(() =>
-    Array(ROWS)
+    Array(30)
       .fill()
-      .map(() => Array(COLS).fill(false))
+      .map(() => Array(50).fill(false))
   );
+  const [originalGrid, setOriginalGrid] = useState(gridFull);
   const [intervalId, setIntervalId] = useState(null); // Declare intervalId
 
   useEffect(() => {
     seed();
+    initiateGame();
   }, []);
+
+  // toggle cell
+  const selectBox = (row, col) => {
+    let gridCopy = arrayClone(gridFull);
+    gridCopy[row][col] = !gridCopy[row][col];
+    setGridFull(gridCopy);
+  };
 
   //initial populating of grid
   const seed = () => {
-    // const newGrid = [];
+    console.log("seeding");
     let newGrid = arrayClone(gridFull);
     for (let i = 0; i < ROWS; i++) {
       newGrid[i] = [];
@@ -83,36 +89,74 @@ function Game() {
       }
     }
     setGridFull(newGrid);
+    setOriginalGrid(newGrid);
   };
 
-  // toggle cell
-  function selectBox(row, col) {
-    let gridCopy = arrayClone(gridFull);
-    gridCopy[row][col] = !gridCopy[row][col];
-    setGridFull(gridCopy);
-  }
+  const initiateGame = () => {
+    clearInterval(intervalId);
+    const id = setInterval(play, SPEED);
+    setIntervalId(id); // Store intervalId
+  };
 
-  // pause/resume game
+  const playButton = () => {
+    clearInterval(intervalId); // pauses game
+    const id = setInterval(play, SPEED);
+    setIntervalId(id); // Store intervalId
+  };
 
-  //reset game
+  const pauseButton = () => {
+    clearInterval(intervalId);
+  };
+
+  const reset = () => {
+    clearInterval(intervalId);
+    setGridFull(originalGrid);
+    setGeneration(0);
+  };
+
+  const play = () => {
+    setGridFull((prevGrid) => {
+      // check current state
+      let g = prevGrid;
+      // change state on clone, to set state of grid with clone at end
+      let g2 = arrayClone(prevGrid);
+
+      for (let i = 0; i < ROWS; i++) {
+        for (let j = 0; j < COLS; j++) {
+          let count = 0;
+          if (i > 0) if (g[i - 1][j]) count++;
+          if (i > 0 && j > 0) if (g[i - 1][j - 1]) count++;
+          if (i > 0 && j < COLS - 1) if (g[i - 1][j + 1]) count++;
+          if (j < COLS - 1) if (g[i][j + 1]) count++;
+          if (j > 0) if (g[i][j - 1]) count++;
+          if (i < ROWS - 1) if (g[i + 1][j]) count++;
+          if (i < ROWS - 1 && j > 0) if (g[i + 1][j - 1]) count++;
+          if (i < ROWS - 1 && COLS - 1) if (g[i + 1][j + 1]) count++;
+          if (g[i][j] && (count < 2 || count > 3)) g2[i][j] = false;
+          if (!g[i][j] && count === 3) g2[i][j] = true;
+        }
+      }
+      setGeneration((prevGeneration) => ++prevGeneration);
+      return g2;
+    });
+  };
 
   return (
-    <div className="center">
-      <h1>Conway's Game of Life</h1>
-      <p>Generation: {generation}</p>
-      <div id="button-section">
-        {/* add logic for pause/play label */}
-        <Button>Pause/Play</Button>
-        <Button>Reset</Button>
+    <div>
+      <h1>The Game of Life</h1>
+      {/* <Buttons buttons={buttons} /> */}
+      <h2>Generations: {generation}</h2>
+      <div id="buttons-section" className="center">
+        <div>
+          <Button onClick={playButton} label="Play" />
+          <Button onClick={pauseButton} label="Pause" />
+          <Button onClick={reset} label="Reset" />
+          <Button onClick={seed} label="Reseed" />
+        </div>
       </div>
-      <Grid
-        gridFull={gridFull}
-        rows={ROWS}
-        cols={COLS}
-        selectBox={selectBox}
-      ></Grid>
+      <Grid gridFull={gridFull} rows={ROWS} cols={COLS} selectBox={selectBox} />
     </div>
   );
-}
+};
 
-export default Game;
+export default App;
